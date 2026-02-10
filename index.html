@@ -785,7 +785,18 @@
           and say yes?
         </p>
         <p style="font-size:1.1rem; color:var(--berry); margin:10px 0 0 0; font-weight:600;">Send me a picture as proof! 📸</p>
-        <button class="cta" type="button" id="yesButton">Yes, always 💗</button>
+        <button class="cta" type="button" id="yesButton" style="display:none;">Yes, always 💗</button>
+        <button class="cta" type="button" id="playTicTacToe">Play for my Heart 🎲</button>
+        <!-- Tic Tac Toe Modal -->
+        <div class="celebration" id="ticTacToeModal" style="z-index:20; background:rgba(255,244,246,0.98);">
+          <div class="celebration-card" style="max-width:340px;">
+            <h3>Win My Heart!</h3>
+            <p style="margin-bottom:10px;">Play Tic Tac Toe to unlock my heart. You are X, I am O!</p>
+            <div id="ticTacToeBoard" style="display:grid; grid-template-columns:repeat(3,48px); gap:8px; justify-content:center; margin:18px 0 10px;"></div>
+            <div id="ticTacToeStatus" style="min-height:24px; font-weight:600; color:#a24a67;"></div>
+            <button class="cta ghost" type="button" id="closeTicTacToe" style="margin-top:10px;">Close</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -805,6 +816,180 @@
 
   <script>
     const yesButton = document.getElementById("yesButton");
+    const playTicTacToe = document.getElementById("playTicTacToe");
+    const ticTacToeModal = document.getElementById("ticTacToeModal");
+    const ticTacToeBoard = document.getElementById("ticTacToeBoard");
+    const ticTacToeStatus = document.getElementById("ticTacToeStatus");
+    const closeTicTacToe = document.getElementById("closeTicTacToe");
+        // --- Tic Tac Toe Game Logic ---
+        let tttBoard = Array(9).fill("");
+        let tttPlayer = "X";
+        let tttGameOver = false;
+
+        function renderTicTacToe() {
+          ticTacToeBoard.innerHTML = "";
+          tttBoard.forEach((cell, i) => {
+            const btn = document.createElement("button");
+            btn.textContent = cell;
+            btn.style.width = "48px";
+            btn.style.height = "48px";
+            btn.style.fontSize = "1.7rem";
+            btn.style.background = cell ? (cell === "X" ? "#f9c9d2" : "#e8d7ff") : "#fff";
+            btn.style.border = "2px solid #a24a67";
+            btn.style.borderRadius = "8px";
+            btn.style.cursor = cell || tttGameOver ? "default" : "pointer";
+            btn.disabled = !!cell || tttGameOver;
+            btn.addEventListener("click", () => handleTicTacToeMove(i));
+            ticTacToeBoard.appendChild(btn);
+          });
+        }
+
+        function checkTicTacToeWin(board, player) {
+          const wins = [
+            [0,1,2],[3,4,5],[6,7,8],
+            [0,3,6],[1,4,7],[2,5,8],
+            [0,4,8],[2,4,6]
+          ];
+          return wins.some(line => line.every(idx => board[idx] === player));
+        }
+
+        function checkTicTacToeDraw(board) {
+          return board.every(cell => cell);
+        }
+
+        function handleTicTacToeMove(idx) {
+          if (tttGameOver || tttBoard[idx]) return;
+          tttBoard[idx] = tttPlayer;
+          renderTicTacToe();
+          if (checkTicTacToeWin(tttBoard, tttPlayer)) {
+            ticTacToeStatus.textContent = "You win my heart! 💖";
+            tttGameOver = true;
+            // Add a heart animation burst in the modal
+            showTicTacToeWinFlow();
+            return;
+          }
+          if (checkTicTacToeDraw(tttBoard)) {
+            ticTacToeStatus.textContent = "It's a draw! Try again.";
+            tttGameOver = true;
+            setTimeout(resetTicTacToe, 1200);
+            return;
+          }
+          // AI move (O)
+          setTimeout(() => {
+            aiTicTacToeMove();
+          }, 400);
+        }
+    // Heart burst and flow to Yes button
+    function showTicTacToeWinFlow() {
+      // Create a burst of hearts in the modal
+      let burstDiv = document.createElement('div');
+      burstDiv.style.position = 'absolute';
+      burstDiv.style.left = 0;
+      burstDiv.style.top = 0;
+      burstDiv.style.width = '100%';
+      burstDiv.style.height = '100%';
+      burstDiv.style.pointerEvents = 'none';
+      burstDiv.style.zIndex = 10;
+      for (let i = 0; i < 18; i++) {
+        let heart = document.createElement('span');
+        heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        heart.style.position = 'absolute';
+        heart.style.left = (40 + Math.random() * 20) + '%';
+        heart.style.top = '50%';
+        heart.style.fontSize = (18 + Math.random() * 10) + 'px';
+        heart.style.opacity = 0.8;
+        heart.style.transform = 'translateY(0) scale(1)';
+        heart.style.transition = 'transform 1.2s cubic-bezier(0.4,1.6,0.6,1), opacity 1.2s';
+        setTimeout(() => {
+          heart.style.transform = `translateY(-${80 + Math.random()*60}px) scale(${1.1 + Math.random()*0.3}) rotate(${Math.random()*60-30}deg)`;
+          heart.style.opacity = 0;
+        }, 80 + Math.random()*200);
+        burstDiv.appendChild(heart);
+      }
+      ticTacToeModal.querySelector('.celebration-card').appendChild(burstDiv);
+      // Show a cute message and then flow to Yes
+      setTimeout(() => {
+        ticTacToeStatus.innerHTML = "<span style='font-size:1.3em;'>You truly won my heart!<br>Click below to answer... 💌</span>";
+        // Add a big heart button to go to Yes
+        let goToYesBtn = document.createElement('button');
+        goToYesBtn.className = 'cta';
+        goToYesBtn.style.marginTop = '18px';
+        goToYesBtn.innerHTML = "Go to the answer 💗";
+        goToYesBtn.onclick = function() {
+          ticTacToeModal.classList.remove('active');
+          yesButton.style.display = 'inline-flex';
+          playTicTacToe.style.display = 'none';
+          yesButton.focus();
+          // Add a floating heart animation from modal to Yes button
+          animateHeartToYes();
+        };
+        ticTacToeStatus.appendChild(goToYesBtn);
+        // Remove burst after animation
+        setTimeout(() => { if (burstDiv.parentNode) burstDiv.parentNode.removeChild(burstDiv); }, 1400);
+      }, 1200);
+    }
+
+    function animateHeartToYes() {
+      // Find modal and Yes button positions
+      const modal = ticTacToeModal.querySelector('.celebration-card');
+      const yesRect = yesButton.getBoundingClientRect();
+      const modalRect = modal.getBoundingClientRect();
+      // Create a floating heart
+      let heart = document.createElement('span');
+      heart.textContent = '💗';
+      heart.style.position = 'fixed';
+      heart.style.left = (modalRect.left + modalRect.width/2 - 16) + 'px';
+      heart.style.top = (modalRect.top + modalRect.height/2 - 16) + 'px';
+      heart.style.fontSize = '2.2rem';
+      heart.style.zIndex = 1000;
+      heart.style.transition = 'all 1.1s cubic-bezier(0.4,1.6,0.6,1)';
+      document.body.appendChild(heart);
+      setTimeout(() => {
+        heart.style.left = (yesRect.left + yesRect.width/2 - 16) + 'px';
+        heart.style.top = (yesRect.top + yesRect.height/2 - 16) + 'px';
+        heart.style.opacity = 0;
+        heart.style.transform = 'scale(1.7)';
+      }, 40);
+      setTimeout(() => { if (heart.parentNode) heart.parentNode.removeChild(heart); }, 1200);
+    }
+
+        function aiTicTacToeMove() {
+          if (tttGameOver) return;
+          // Simple AI: pick random empty
+          const empties = tttBoard.map((c,i) => c ? null : i).filter(i => i !== null);
+          if (empties.length === 0) return;
+          const idx = empties[Math.floor(Math.random() * empties.length)];
+          tttBoard[idx] = "O";
+          renderTicTacToe();
+          if (checkTicTacToeWin(tttBoard, "O")) {
+            ticTacToeStatus.textContent = "Oh no! I win this round. Try again!";
+            tttGameOver = true;
+            setTimeout(resetTicTacToe, 1200);
+            return;
+          }
+          if (checkTicTacToeDraw(tttBoard)) {
+            ticTacToeStatus.textContent = "It's a draw! Try again.";
+            tttGameOver = true;
+            setTimeout(resetTicTacToe, 1200);
+            return;
+          }
+        }
+
+        function resetTicTacToe() {
+          tttBoard = Array(9).fill("");
+          tttPlayer = "X";
+          tttGameOver = false;
+          ticTacToeStatus.textContent = "";
+          renderTicTacToe();
+        }
+
+        playTicTacToe.addEventListener("click", () => {
+          ticTacToeModal.classList.add("active");
+          resetTicTacToe();
+        });
+        closeTicTacToe.addEventListener("click", () => {
+          ticTacToeModal.classList.remove("active");
+        });
     const celebration = document.getElementById("celebration");
     const burst = document.getElementById("burst");
     const dayCard = document.getElementById("dayCard");
