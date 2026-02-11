@@ -352,6 +352,20 @@
       display: block;
     }
 
+    .story-img {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 12px;
+      margin: 10px 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .story-img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
     .story-controls {
       display: flex;
       flex-wrap: wrap;
@@ -736,32 +750,36 @@
           </div>
           <div class="story" id="dayStory">
             <h3>Our Little Story</h3>
-            <div class="story-steps" id="storySteps">
               <div class="story-step active" data-icon="💖">
                 <h3>Our Beginning</h3>
+                <img src="Images/First_Love.jpg" alt="First Love" class="story-img">
                 <p>From the moment I saw you in high school, I knew you were the one. You were my first and best Valentine's dance, a memory my heart never forgot.</p>
               </div>
               <div class="story-step" data-icon="✨">
                 <h3>The Cold Day, The Warmth of You</h3>
+                <img src="Images/Adventure.jpg" alt="Adventure Time" class="story-img">
                 <p>Our story truly began four years ago. I'll never forget that freezing cold hike where just having you next to me made me feel warmer than I've ever been.</p>
               </div>
               <div class="story-step" data-icon="🤝">
                 <h3>A Hand to Hold</h3>
-                <p>The first time I took your hand to cross that bridge, I knew I would always reach for you through any waters life might bring. It was a silent promise.</p>
+                <img src="Images/Engagement.jpg" alt="She Said Yes" class="story-img">
+                <p>The first time I took your hand to cross that bridge, I knew I would always reach for you through any waters life might bring.</p>
               </div>
               <div class="story-step" data-icon="🥰">
                 <h3>My Favorite Things</h3>
+                <img src="Images/Date_night.jpg" alt="Date Night" class="story-img">
                 <p>I fall in love with you all over again, every single day. Your soft heart, the way you get lost in my eyes, and the smile that lights up my darkest days.</p>
               </div>
               <div class="story-step" data-icon="🌟">
                 <h3>A Brighter World</h3>
+                <img src="Images/Wedding.jpg" alt="Best Day Ever" class="story-img">
                 <p>You radiate a light that makes everything around you more beautiful. Your laugh is the music my heart dances to, and I'm so grateful to see it every day.</p>
               </div>
               <div class="story-step" data-icon="💌">
                 <h3>My Promise to You</h3>
+                <img src="Images/Honeymoon_beach.jpg" alt="Paradise" class="story-img">
                 <p>Every day with you is a gift. I promise to always be your best friend, to protect you, and to love you with everything I am. Rochelle, my Lovey, I am and will always be yours.</p>
               </div>
-            </div>
             <div class="story-controls">
               <button class="cta ghost" type="button" id="prevStep">Back</button>
               <button class="cta" type="button" id="nextStep">Next Chapter</button>
@@ -1006,6 +1024,7 @@
     const memoryContainer = document.getElementById("memoryContainer");
 
     const valentineDate = new Date(new Date().getFullYear(), 1, 14);
+    // const valentineDate = new Date(new Date().getFullYear(), 1, 10);
 
     const imageList = [
       { src: "Images/First_Love.jpg", caption: "First Love" },
